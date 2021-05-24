@@ -1,6 +1,6 @@
 # Project with Kotlin examples
 
-I used most relevant topics from Java developer perspective.
+I used the most relevant topics from Java developer perspective.
 
 * Generics
 * Inheritence  
