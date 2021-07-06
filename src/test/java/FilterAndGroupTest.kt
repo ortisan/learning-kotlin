@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PersonTest {
+internal class FilterAndGroupTest {
 
     private fun getAddresses(): List<Address> {
         val address = Address(id = "1", line1 = "Street 1")
