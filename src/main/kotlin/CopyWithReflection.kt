@@ -1,3 +1,4 @@
+//https://stackoverflow.com/questions/49511098/call-data-class-copy-via-reflection
 import kotlin.reflect.full.memberFunctions
 
 abstract class Nameable {
