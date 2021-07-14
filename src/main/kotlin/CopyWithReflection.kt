@@ -5,6 +5,9 @@ abstract class Nameable {
     abstract fun getName(): String
 
     fun clone(newName: String): Any? {
+        if (!this::class.isData) {
+            throw Error("clone is only supported for data classes")
+        }
         val copy = this::class.memberFunctions.first { it.name == "copy" }
         return copy.call(this, newName, 21)
     }
