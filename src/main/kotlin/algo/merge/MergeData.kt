@@ -6,37 +6,93 @@ enum class AddressType {
     OTHER
 }
 
-data class Address(val id: String,
-                   val addressType: AddressType,
-                   val line1: String? = null,
-                   val zipcode: String? = null)
+data class Address(
+    val id: String,
+    val addressTypes: List<AddressType>,
+    val line1: String,
+    val completenessLevel: Int
+) {
+
+}
 
 
-data class FieldAddress(val newValue: Address,
-                        val actualValue: Address)
+fun mergeData(
+    newAddresses: List<Address>,
+    addressesGoldenSource: List<Address>
+): Triple<List<Address>?, List<Address>?, List<Address>?> {
+    // normalize new addresses
+    val normalizedNewAddresses =
+        newAddresses.flatMap { address -> address.addressTypes.map { _type -> address.copy(addressTypes = listOf(_type)) } }
+    val mapNewAddressByType = HashMap<AddressType, Address>();
+    normalizedNewAddresses.forEach { it ->
+        mapNewAddressByType[it.addressTypes[0]] = it
+    }
 
+    // normalize golden
+    val normalizedGolden = addressesGoldenSource.flatMap { address ->
+        address.addressTypes.map { _type ->
+            address.copy(
+                addressTypes = listOf(_type)
+            )
+        }
+    }
+    val mapGoldenAddressByType = HashMap<AddressType, Address>();
+    val mapLine1HashByAddress = HashMap<Int, Address>();
+    normalizedGolden.forEach { it ->
+        mapGoldenAddressByType[it.addressTypes[0]] = it
+        mapLine1HashByAddress[it.line1.hashCode()] = it
+    }
 
-fun mergeData(addressesGoldenSource: List<FieldAddress>, addressesDiffs: List<FieldAddress>): List<Address> {
-    val diffByIdNew = addressesDiffs.groupBy { it.newValue.id }
-    val diffByIdActual = addressesDiffs.groupBy { it.actualValue.id }
+    val newAddresses = ArrayList<Address>()
+    val updateAddresses = ArrayList<Address>()
+    val openDiffAddress = ArrayList<Address>()
 
-    return addressesGoldenSource
-            .map {
-                val id = it.newValue.id
-                if (!diffByIdActual.get(it.newValue.id).isNullOrEmpty()) {
-                    null
-                } else {
-                    val diffsOpen = diffByIdNew.get(id)
-                    if (diffsOpen.isNullOrEmpty()) {
-                        it
-                    } else {
-                        val firstDiff = diffsOpen.get(0)
-                        it.copy(newValue = it.newValue.copy(addressType = firstDiff.newValue.addressType))
-                    }
-                }
+    for (newAddress in normalizedNewAddresses) {
+        val goldenAddressSameType = mapGoldenAddressByType[newAddress.addressTypes[0]]
+
+        if (newAddress.addressTypes.contains(AddressType.OTHER)) {
+            // if type other always add
+            newAddresses.add(newAddress) // always add
+        } else if (goldenAddressSameType != null) {
+            // if already exists other address same type
+            if (newAddress.completenessLevel >= goldenAddressSameType.completenessLevel) {
+                // if completeness is higher
+                newAddresses.add(newAddress)
+                val goldenAddressUpdated = goldenAddressSameType.copy(addressTypes = listOf(AddressType.OTHER))
+                updateAddresses.add(goldenAddressUpdated)
+            } else {
+                // if completeness is lower
+                newAddresses.add(newAddress.copy(addressTypes = listOf(AddressType.OTHER)))
+                openDiffAddress.add(newAddress)
             }
-            .filter { it != null }
-            .map { it!!.newValue }
+        } else {
+            newAddresses.add(newAddress)
+        }
+    }
 
+    // Collect all addressTypes
+    val uniqueTypesNewAddressType = newAddresses.flatMap { it.addressTypes }.filter { it != AddressType.OTHER }
+    // Remove all types already set by newAddresses
+    val updateAddressRemovedDuplicateTypes = updateAddresses.map { address -> address.copy(addressTypes = address.addressTypes.filter { addressType -> !uniqueTypesNewAddressType.contains(addressType) })}
+
+
+    // Regroup new addresses
+    val newAddressesGrouped = newAddresses.groupBy { it.line1.hashCode() }.map { it ->
+        it.value.reduce { accAddress, address ->
+            accAddress.copy(
+                addressTypes = (accAddress.addressTypes + address.addressTypes).toSet().toList()
+            )
+        }
+    }
+
+    val updatedAddressesGrouped = updateAddressRemovedDuplicateTypes.groupBy { it.line1.hashCode() }.map { it ->
+        it.value.reduce { accAddress, address ->
+            accAddress.copy(
+                addressTypes = (accAddress.addressTypes + address.addressTypes).toSet().toList()
+            )
+        }
+    }
+
+    return Triple(newAddressesGrouped, updatedAddressesGrouped, openDiffAddress)
 }
 

@@ -1,39 +1,136 @@
 import algo.merge.Address
 import algo.merge.AddressType
-import algo.merge.FieldAddress
 import algo.merge.mergeData
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class MergeAlgoTest {
 
+
     @Test
-    fun testMerge() {
+    fun mergeNewAddressesCompletenessHigher() {
         val idAddress1 = UUID.randomUUID()
         val idAddress2 = UUID.randomUUID()
-        val idAddress3 = UUID.randomUUID()
 
-        val address1 = Address(id = idAddress1.toString(), addressType = AddressType.RESIDENTIAL, line1 = "Av. Paulista 1", zipcode = "123123")
-        val address2 = Address(id = idAddress2.toString(), addressType = AddressType.BUSINESS, line1 = "Rua do Carmo 2", zipcode = "456456")
-        val address3 = Address(id = idAddress3.toString(), addressType = AddressType.OTHER, line1 = "Rua Bonifácio 3", zipcode = "789789")
+        val paulistaResBusinessCompleteness400 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
+            line1 = "Av. Paulista",
+            400
+        )
+        val bonifacioOther400 =
+            Address(
+                id = idAddress2.toString(),
+                addressTypes = Arrays.asList(AddressType.OTHER),
+                line1 = "Rua Bonifácio",
+                400
+            )
 
-        val addressDiffOpen = Address(id = idAddress3.toString(), addressType = AddressType.RESIDENTIAL)
+        val newAddresses = listOf(paulistaResBusinessCompleteness400, bonifacioOther400)
 
-        val addressesGoldenSource = Arrays.asList(
-                FieldAddress(newValue = address1, actualValue = address1),
-                FieldAddress(newValue = address2, actualValue = address2),
-                FieldAddress(newValue = address3, actualValue = address3)
+        val moocaResBusinessCompleteness200 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
+            line1 = "Rua Mooca",
+            200
+        )
+        val goldenAddresses = listOf(moocaResBusinessCompleteness200)
+
+        val (newAddressesResult, updateAddressesResult, openDiffResult) = mergeData(newAddresses, goldenAddresses)
+
+        assertEquals(2, newAddressesResult?.size)
+        assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.RESIDENTIAL, AddressType.BUSINESS) }
+        assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
+        assertEquals(1, updateAddressesResult?.size)
+        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.OTHER) }
+        assertEquals(0, openDiffResult?.size)
+    }
+
+
+    @Test
+    fun mergeNewAddressesCompletenessLower() {
+        val idAddress1 = UUID.randomUUID()
+        val idAddress2 = UUID.randomUUID()
+
+        val paulistaResBusinessCompleteness200 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
+            line1 = "Av. Paulista",
+            200
+        )
+        val bonifacioOther200 =
+            Address(
+                id = idAddress2.toString(),
+                addressTypes = Arrays.asList(AddressType.OTHER),
+                line1 = "Rua Bonifácio",
+                200
+            )
+
+        val newAddresses = listOf(paulistaResBusinessCompleteness200, bonifacioOther200)
+
+        val moocaResBusinessCompleteness400 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
+            line1 = "Rua Mooca",
+            400
+        )
+        val goldenAddresses = listOf(moocaResBusinessCompleteness400)
+
+        val (newAddressesResult, updateAddressesResult, openDiffResult) = mergeData(newAddresses, goldenAddresses)
+
+        assertEquals(2, newAddressesResult?.size)
+        assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.OTHER) }
+        assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
+        assertEquals(0, updateAddressesResult?.size)
+        assertEquals(2, openDiffResult?.size)
+    }
+
+    @Test
+    fun mergeNewAddressesCompletenessLowerAndHigher() {
+        val idAddress1 = UUID.randomUUID()
+        val idAddress2 = UUID.randomUUID()
+
+        val paulistaResBusinessCompleteness300 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
+            line1 = "Av. Paulista",
+            300
         )
 
-        val addressFromDiff = Arrays.asList(
-                FieldAddress(newValue = addressDiffOpen, actualValue = address1)
+        val bonifacioOther200 =
+            Address(
+                id = idAddress2.toString(),
+                addressTypes = Arrays.asList(AddressType.OTHER),
+                line1 = "Rua Bonifácio",
+                200
+            )
+
+        val newAddresses = listOf(paulistaResBusinessCompleteness300, bonifacioOther200)
+
+        val saoFranciscoResCompleteness200 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL),
+            line1 = "Rua Mooca",
+            200
         )
 
-        val addressesMerged = mergeData(addressesGoldenSource, addressFromDiff)
+        val moocaBusinessCompleteness400 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.BUSINESS),
+            line1 = "Rua Mooca",
+            400
+        )
+        val goldenAddresses = listOf(saoFranciscoResCompleteness200, moocaBusinessCompleteness400)
 
-        Assertions.assertEquals(2, addressesMerged.size)
-        val addressByType = addressesMerged.groupBy { it.addressType }
-        Assertions.assertEquals(address3.id, addressByType.get(AddressType.RESIDENTIAL)!!.get(0).id)
+        val (newAddressesResult, updateAddressesResult, openDiffResult) = mergeData(newAddresses, goldenAddresses)
+
+        assertEquals(2, newAddressesResult?.size)
+        assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.RESIDENTIAL, AddressType.OTHER) }
+        assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
+        assertEquals(1, updateAddressesResult?.size)
+        assertTrue { updateAddressesResult!![1].addressTypes == listOf(AddressType.BUSINESS, AddressType.OTHER) }
+        assertEquals(1, openDiffResult?.size)
     }
 }
