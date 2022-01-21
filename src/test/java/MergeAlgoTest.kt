@@ -130,7 +130,54 @@ internal class MergeAlgoTest {
         assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.RESIDENTIAL, AddressType.OTHER) }
         assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
         assertEquals(1, updateAddressesResult?.size)
-        assertTrue { updateAddressesResult!![1].addressTypes == listOf(AddressType.BUSINESS, AddressType.OTHER) }
+        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.BUSINESS) }
+        assertEquals(1, openDiffResult?.size)
+    }
+
+    @Test
+    fun mergeNewAddressesWithSameDataCompletenessLowerAndHigher() {
+        val idAddress1 = UUID.randomUUID()
+        val idAddress2 = UUID.randomUUID()
+
+        val paulistaResBusinessCompleteness300 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
+            line1 = "Av. Paulista",
+            300
+        )
+
+        val bonifacioOther200 =
+            Address(
+                id = idAddress2.toString(),
+                addressTypes = Arrays.asList(AddressType.OTHER),
+                line1 = "Rua Bonifácio",
+                200
+            )
+
+        val newAddresses = listOf(paulistaResBusinessCompleteness300, bonifacioOther200)
+
+        val saoFranciscoResCompleteness200 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL),
+            line1 = "Rua Mooca",
+            200
+        )
+
+        val moocaBusinessCompleteness400 = Address(
+            id = idAddress1.toString(),
+            addressTypes = Arrays.asList(AddressType.BUSINESS),
+            line1 = "Rua Mooca",
+            400
+        )
+        val goldenAddresses = listOf(saoFranciscoResCompleteness200, moocaBusinessCompleteness400)
+
+        val (newAddressesResult, updateAddressesResult, openDiffResult) = mergeData(newAddresses, goldenAddresses)
+
+        assertEquals(2, newAddressesResult?.size)
+        assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.RESIDENTIAL, AddressType.OTHER) }
+        assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
+        assertEquals(1, updateAddressesResult?.size)
+        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.BUSINESS) }
         assertEquals(1, openDiffResult?.size)
     }
 }

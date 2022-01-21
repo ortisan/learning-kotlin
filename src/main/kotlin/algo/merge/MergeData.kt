@@ -44,7 +44,6 @@ fun mergeData(
     }
 
     val newAddresses = ArrayList<Address>()
-    val updateAddresses = ArrayList<Address>()
     val openDiffAddress = ArrayList<Address>()
 
     for (newAddress in normalizedNewAddresses) {
@@ -58,8 +57,6 @@ fun mergeData(
             if (newAddress.completenessLevel >= goldenAddressSameType.completenessLevel) {
                 // if completeness is higher
                 newAddresses.add(newAddress)
-                val goldenAddressUpdated = goldenAddressSameType.copy(addressTypes = listOf(AddressType.OTHER))
-                updateAddresses.add(goldenAddressUpdated)
             } else {
                 // if completeness is lower
                 newAddresses.add(newAddress.copy(addressTypes = listOf(AddressType.OTHER)))
@@ -73,8 +70,7 @@ fun mergeData(
     // Collect all addressTypes
     val uniqueTypesNewAddressType = newAddresses.flatMap { it.addressTypes }.filter { it != AddressType.OTHER }
     // Remove all types already set by newAddresses
-    val updateAddressRemovedDuplicateTypes = updateAddresses.map { address -> address.copy(addressTypes = address.addressTypes.filter { addressType -> !uniqueTypesNewAddressType.contains(addressType) })}
-
+    val updateAddressRemovedDuplicateTypes = normalizedGolden.map { address -> address.copy(addressTypes = address.addressTypes.filter { addressType -> !uniqueTypesNewAddressType.contains(addressType) })}
 
     // Regroup new addresses
     val newAddressesGrouped = newAddresses.groupBy { it.line1.hashCode() }.map { it ->
