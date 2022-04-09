@@ -6,12 +6,12 @@ import kotlin.test.assertTrue
 
 internal class FilterAndGroupTest {
 
-    private fun getAddresses(): List<Address> {
-        val address = Address(id = "1", line1 = "Street 1")
-        val address2 = Address(id = "2", line1 = "Street 1")
-        val address3 = Address(id = "3", line1 = "Street 1")
+    private fun getAddresses(): List<AddressFilterGroup> {
+        val addressFilterGroup = AddressFilterGroup(id = "1", line1 = "Street 1")
+        val addressFilterGroup2 = AddressFilterGroup(id = "2", line1 = "Street 1")
+        val addressFilterGroup3 = AddressFilterGroup(id = "3", line1 = "Street 1")
 
-        return listOf(address, address2, address3)
+        return listOf(addressFilterGroup, addressFilterGroup2, addressFilterGroup3)
     }
 
     private fun getAddressesAudits(): List<AddressAuditMetadata> {

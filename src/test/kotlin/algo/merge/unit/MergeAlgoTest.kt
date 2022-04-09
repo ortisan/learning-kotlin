@@ -1,3 +1,5 @@
+package algo.merge.unit
+
 import algo.merge.Address
 import algo.merge.AddressType
 import algo.merge.mergeData
@@ -8,7 +10,6 @@ import kotlin.test.assertTrue
 
 internal class MergeAlgoTest {
 
-
     @Test
     fun mergeNewAddressesCompletenessHigher() {
         val idAddress1 = UUID.randomUUID()
@@ -16,24 +17,23 @@ internal class MergeAlgoTest {
 
         val paulistaResBusinessCompleteness400 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             line1 = "Av. Paulista",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             400
         )
-        val bonifacioOther400 =
-            Address(
-                id = idAddress2.toString(),
-                addressTypes = Arrays.asList(AddressType.OTHER),
-                line1 = "Rua Bonifácio",
-                400
-            )
+        val bonifacioOther400 = Address(
+            id = idAddress2.toString(),
+            line1 = "Rua Bonifácio",
+            addressTypes = Arrays.asList(AddressType.OTHER),
+            400
+        )
 
         val newAddresses = listOf(paulistaResBusinessCompleteness400, bonifacioOther400)
 
         val moocaResBusinessCompleteness200 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             line1 = "Rua Mooca",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             200
         )
         val goldenAddresses = listOf(moocaResBusinessCompleteness200)
@@ -56,24 +56,23 @@ internal class MergeAlgoTest {
 
         val paulistaResBusinessCompleteness200 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             line1 = "Av. Paulista",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             200
         )
-        val bonifacioOther200 =
-            Address(
-                id = idAddress2.toString(),
-                addressTypes = Arrays.asList(AddressType.OTHER),
-                line1 = "Rua Bonifácio",
-                200
-            )
+        val bonifacioOther200 = Address(
+            id = idAddress2.toString(),
+            line1 = "Rua Bonifácio",
+            addressTypes = Arrays.asList(AddressType.OTHER),
+            200
+        )
 
         val newAddresses = listOf(paulistaResBusinessCompleteness200, bonifacioOther200)
 
         val moocaResBusinessCompleteness400 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             line1 = "Rua Mooca",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             400
         )
         val goldenAddresses = listOf(moocaResBusinessCompleteness400)
@@ -94,32 +93,31 @@ internal class MergeAlgoTest {
 
         val paulistaResBusinessCompleteness300 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             line1 = "Av. Paulista",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             300
         )
 
-        val bonifacioOther200 =
-            Address(
-                id = idAddress2.toString(),
-                addressTypes = Arrays.asList(AddressType.OTHER),
-                line1 = "Rua Bonifácio",
-                200
-            )
+        val bonifacioOther200 = Address(
+            id = idAddress2.toString(),
+            line1 = "Rua Bonifácio",
+            addressTypes = Arrays.asList(AddressType.OTHER),
+            200
+        )
 
         val newAddresses = listOf(paulistaResBusinessCompleteness300, bonifacioOther200)
 
         val saoFranciscoResCompleteness200 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL),
             line1 = "Rua Mooca",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL),
             200
         )
 
         val moocaBusinessCompleteness400 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.BUSINESS),
             line1 = "Rua Mooca",
+            addressTypes = Arrays.asList(AddressType.BUSINESS),
             400
         )
         val goldenAddresses = listOf(saoFranciscoResCompleteness200, moocaBusinessCompleteness400)
@@ -141,16 +139,16 @@ internal class MergeAlgoTest {
 
         val paulistaResBusinessCompleteness300 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             line1 = "Av. Paulista",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL, AddressType.BUSINESS),
             300
         )
 
         val bonifacioOther200 =
             Address(
                 id = idAddress2.toString(),
-                addressTypes = Arrays.asList(AddressType.OTHER),
                 line1 = "Rua Bonifácio",
+                addressTypes = Arrays.asList(AddressType.OTHER),
                 200
             )
 
@@ -158,15 +156,15 @@ internal class MergeAlgoTest {
 
         val saoFranciscoResCompleteness200 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.RESIDENTIAL),
             line1 = "Rua Mooca",
+            addressTypes = Arrays.asList(AddressType.RESIDENTIAL),
             200
         )
 
         val moocaBusinessCompleteness400 = Address(
             id = idAddress1.toString(),
-            addressTypes = Arrays.asList(AddressType.BUSINESS),
             line1 = "Rua Mooca",
+            addressTypes = Arrays.asList(AddressType.BUSINESS),
             400
         )
         val goldenAddresses = listOf(saoFranciscoResCompleteness200, moocaBusinessCompleteness400)
