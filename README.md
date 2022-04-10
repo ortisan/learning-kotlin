@@ -2,13 +2,13 @@
 
 I used the most relevant topics from Java developer perspective.
 
-* ortisan.Generics
-* ortisan.Inheritence  
+* Generics
+* Inheritence  
 * Companion Objects
 * Null Safety
-* ortisan.Functions
+* Functions
 * Destruction Declarations
-* ortisan.Coroutines
+* Coroutines
 
 Docs: https://kotlinlang.org/docs/home.html
 
