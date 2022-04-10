@@ -1,3 +1,5 @@
+package ortisan
+
 //https://kotlinlang.org/docs/generics.html#declaration-site-variance
 //https://kotlinlang.org/docs/generics.html#star-projections
 class Generics {

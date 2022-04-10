@@ -1,3 +1,5 @@
+package ortisan
+
 //https://kotlinlang.org/docs/inheritance.html
 class Inheritence {
     fun createPersons() {

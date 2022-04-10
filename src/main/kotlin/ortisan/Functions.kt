@@ -1,3 +1,5 @@
+package ortisan
+
 // https://kotlinlang.org/docs/functions.html
 class Functions {
     companion object {

@@ -1,3 +1,5 @@
+package ortisan
+
 // Copy of destruction on javascript (https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
 class DestructionDeclarations {
 

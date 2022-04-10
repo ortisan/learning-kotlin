@@ -1,3 +1,5 @@
+package ortisan
+
 //https://kotlinlang.org/docs/null-safety.html#nullable-types-and-non-null-types
 class NullSafety {
 

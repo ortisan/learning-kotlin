@@ -1,8 +1,8 @@
-package algo.merge.unit
+package ortisan.algo.merge.unit
 
-import algo.merge.Address
-import algo.merge.AddressType
-import algo.merge.mergeData
+import ortisan.algo.merge.Address
+import ortisan.algo.merge.AddressType
+import ortisan.algo.merge.mergeData
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
@@ -116,7 +116,7 @@ internal class MergeAlgoTest {
 
         val moocaBusinessCompleteness400 = Address(
             id = idAddress1.toString(),
-            line1 = "Rua Mooca",
+            line1 = "Av. Faria Lima",
             addressTypes = Arrays.asList(AddressType.BUSINESS),
             400
         )
@@ -125,10 +125,10 @@ internal class MergeAlgoTest {
         val (newAddressesResult, updateAddressesResult, openDiffResult) = mergeData(newAddresses, goldenAddresses)
 
         assertEquals(2, newAddressesResult?.size)
-        assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.RESIDENTIAL, AddressType.OTHER) }
+        assertTrue { newAddressesResult!![0].addressTypes.containsAll(listOf(AddressType.RESIDENTIAL, AddressType.OTHER)) }
         assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
         assertEquals(1, updateAddressesResult?.size)
-        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.BUSINESS) }
+        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.OTHER) }
         assertEquals(1, openDiffResult?.size)
     }
 
@@ -163,7 +163,7 @@ internal class MergeAlgoTest {
 
         val moocaBusinessCompleteness400 = Address(
             id = idAddress1.toString(),
-            line1 = "Rua Mooca",
+            line1 = "Av. Faria Lima",
             addressTypes = Arrays.asList(AddressType.BUSINESS),
             400
         )
@@ -175,7 +175,7 @@ internal class MergeAlgoTest {
         assertTrue { newAddressesResult!![0].addressTypes == listOf(AddressType.RESIDENTIAL, AddressType.OTHER) }
         assertTrue { newAddressesResult!![1].addressTypes == listOf(AddressType.OTHER) }
         assertEquals(1, updateAddressesResult?.size)
-        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.BUSINESS) }
+        assertTrue { updateAddressesResult!![0].addressTypes == listOf(AddressType.OTHER) }
         assertEquals(1, openDiffResult?.size)
     }
 }

@@ -1,4 +1,4 @@
-//Like scala: https://docs.scala-lang.org/overviews/scala-book/companion-objects.html
+package ortisan//Like scala: https://docs.scala-lang.org/overviews/scala-book/companion-objects.html
 //https://kotlinlang.org/docs/object-declarations.html#companion-objects
 
 /**
@@ -10,7 +10,7 @@ class CompanionObjects {
         const val TITLE = "COMPANION OBJECTS"
 
         fun showTitle(): String {
-            return "${HELLO} ${TITLE}"
+            return "$HELLO $TITLE"
         }
     }
 }

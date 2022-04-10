@@ -1,6 +1,6 @@
-package algo.merge
+package ortisan.algo.merge
 
-import util.DigestUtil
+import ortisan.util.DigestUtil
 
 enum class AddressType {
     BUSINESS,
@@ -56,24 +56,24 @@ fun mergeData(
     val newAddresses = ArrayList<Address>()
     val openDiffAddress = ArrayList<Address>()
 
-    normalizedNewAddresses.forEach { address ->
-        val goldenAddressSameType = mapGoldenAddressByType[address.addressTypes.first()]
+    normalizedNewAddresses.forEach { newAddress ->
+        val goldenAddressSameType = mapGoldenAddressByType[newAddress.addressTypes.first()]
 
-        if (address.addressTypes.contains(AddressType.OTHER)) {
+        if (newAddress.addressTypes.first() == AddressType.OTHER) {
             // if type is other, always add
-            newAddresses.add(address) // always add
+            newAddresses.add(newAddress) // always add
         } else if (goldenAddressSameType != null) {
             // if already exists other address same type
-            if (address.completenessLevel >= goldenAddressSameType.completenessLevel) {
+            if (newAddress.completenessLevel >= goldenAddressSameType.completenessLevel) {
                 // if completeness is higher
-                newAddresses.add(address)
+                newAddresses.add(newAddress)
             } else {
                 // if completeness is lower
-                newAddresses.add(address.copy(addressTypes = listOf(AddressType.OTHER)))
-                openDiffAddress.add(address)
+                newAddresses.add(newAddress.copy(addressTypes = listOf(AddressType.OTHER)))
+                openDiffAddress.add(newAddress)
             }
         } else {
-            newAddresses.add(address)
+            newAddresses.add(newAddress)
         }
     }
 
@@ -81,10 +81,17 @@ fun mergeData(
     val uniqueTypesNewAddressType = newAddresses.flatMap { it.addressTypes }.filter { it != AddressType.OTHER }
     // Remove all types already set by newAddresses
     val addressesToUpdateDuplicateTypesRemoved =
-        if (uniqueTypesNewAddressType.isNotEmpty()) normalizedGolden.map { address ->
-            address.copy(addressTypes = address.addressTypes.filter { addressType ->
-                !uniqueTypesNewAddressType.contains(addressType)
-            })
+        if (uniqueTypesNewAddressType.isNotEmpty()) {
+            normalizedGolden.filter {
+                // First because the normalization
+                uniqueTypesNewAddressType.contains(it.addressTypes.first())
+            }.map { goldenAddress ->
+                // Remove from golden all unique types (Residential and Business). If empty update with Other.
+                val adressesTypes = goldenAddress.addressTypes.filter { addressType ->
+                    !uniqueTypesNewAddressType.contains(addressType)
+                }.ifEmpty { listOf(AddressType.OTHER) }
+                goldenAddress.copy(addressTypes = adressesTypes)
+            }
         } else emptyList()
 
     // Regroup addresses to insert
@@ -99,7 +106,7 @@ fun mergeData(
 
     // Regroup addresses to update
     // Remove denormalisation 1 address type -> n.
-    val addressesToUpdateGrouped = addressesToUpdateDuplicateTypesRemoved.groupBy { it.line1.hashCode() }.map { it ->
+    val addressesToUpdateGrouped = addressesToUpdateDuplicateTypesRemoved.groupBy { it.getHashValue() }.map { it ->
         it.value.reduce { accAddress, address ->
             accAddress.copy(
                 addressTypes = (accAddress.addressTypes + address.addressTypes).toSet().toList()

@@ -1,3 +1,5 @@
+package ortisan
+
 class HelloWorld {
     fun greet() {
         println("Hello World")
